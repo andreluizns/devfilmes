@@ -79,9 +79,7 @@ function Filme() {
   return (
     <>
       {/* Hero */}
-      <div className="relative bg-gradient-to-b from-indigo-950 via-indigo-900 to-indigo-950 sm:to-[#fafafa] pb-16">
-        {/* degradê de saída no mobile (~20px) */}
-        <div className="sm:hidden absolute bottom-0 left-0 right-0 h-5 bg-gradient-to-b from-indigo-950 to-[#fafafa]" />
+      <div className="bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-700 pb-16">
         <div className="max-w-4xl mx-auto px-6 pt-10">
           <Link to="/" className="text-indigo-300 text-sm hover:text-white mb-6 inline-block">
             ← Voltar
