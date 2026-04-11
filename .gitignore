@@ -1,0 +1,21 @@
+# Dependências
+node_modules
+
+# Build
+dist
+dist-ssr
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+*.local
+
+# Ferramentas de desenvolvimento
+coverage
+.vite
+
+# Superpowers / Claude
+.claude
+.superpowers
+docs
