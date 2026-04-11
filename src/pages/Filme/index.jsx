@@ -84,13 +84,13 @@ function Filme() {
           <Link to="/" className="text-indigo-300 text-sm hover:text-white mb-6 inline-block">
             ← Voltar
           </Link>
-          <div className="flex gap-8 items-start">
+          <div className="flex flex-col sm:flex-row gap-8 items-start">
             {/* Poster */}
             <img
               src={`${POSTER_BASE}${filme.poster_path}`}
               alt={filme.title}
               decoding="async"
-              className="w-48 rounded-2xl shadow-2xl flex-shrink-0"
+              className="w-full sm:w-48 rounded-2xl shadow-2xl sm:flex-shrink-0"
             />
             {/* Meta */}
             <div className="flex-1 pt-2">
