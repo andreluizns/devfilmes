@@ -9,6 +9,8 @@ import Favoritos from '@/pages/Favoritos'
 import Login from '@/pages/Login'
 import Cadastro from '@/pages/Cadastro'
 import Categoria from '@/pages/Categoria'
+import RecuperarSenha from '@/pages/RecuperarSenha'
+import NovaSenha from '@/pages/NovaSenha'
 import NotFound from '@/pages/NotFound'
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
             <Route path="/categoria/:id" element={<Categoria />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+            <Route path="/nova-senha" element={<NovaSenha />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
