@@ -1,5 +1,7 @@
 # DevFilme
 
+**[▶ Acessar o projeto ao vivo](https://devfilmes.vercel.app/)**
+
 Site de catálogo de filmes construído com React. Exibe filmes por categoria usando a API do TMDB, com autenticação de usuários, sistema de favoritos, comentários por filme e carrossel de opiniões.
 
 ---
