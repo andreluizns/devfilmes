@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/services/supabase'
+import { useToast } from '@/hooks/useToast'
 
 function RecuperarSenha() {
+  const { toast } = useToast()
   const [email, setEmail] = useState('')
   const [enviado, setEnviado] = useState(false)
   const [erro, setErro] = useState(null)
@@ -20,7 +22,9 @@ function RecuperarSenha() {
     setCarregando(false)
     if (error) {
       setErro('Não foi possível enviar o e-mail. Verifique o endereço.')
+      toast('Não foi possível enviar o e-mail. Verifique o endereço.', 'error')
     } else {
+      toast('E-mail de recuperação enviado!', 'success')
       setEnviado(true)
     }
   }

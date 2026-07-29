@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/services/supabase'
 import { useAuth } from '@/hooks/useAuth'
+import { useToast } from '@/hooks/useToast'
 
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w300'
 
 function Favoritos() {
   const { usuario } = useAuth()
+  const { toast } = useToast()
   const [favoritos, setFavoritos] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -25,8 +27,13 @@ function Favoritos() {
   }, [usuario.id])
 
   async function remover(favoriteId) {
-    await supabase.from('favorites').delete().eq('id', favoriteId)
+    const { error } = await supabase.from('favorites').delete().eq('id', favoriteId).eq('user_id', usuario.id)
+    if (error) {
+      toast('Erro ao remover. Tente novamente.', 'error')
+      return
+    }
     setFavoritos((prev) => prev.filter((f) => f.id !== favoriteId))
+    toast('Removido dos favoritos.', 'success')
   }
 
   if (loading) {

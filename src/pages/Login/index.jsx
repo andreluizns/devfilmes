@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/services/supabase'
+import { useToast } from '@/hooks/useToast'
 
 function Login() {
   const navigate = useNavigate()
+  const { toast } = useToast()
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState(null)
@@ -17,7 +19,9 @@ function Login() {
     setCarregando(false)
     if (error) {
       setErro('E-mail ou senha incorretos.')
+      toast('E-mail ou senha incorretos.', 'error')
     } else {
+      toast('Login realizado com sucesso!', 'success')
       navigate('/')
     }
   }

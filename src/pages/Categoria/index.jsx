@@ -4,8 +4,6 @@ import api from '@/services/api'
 import categories from '@/config/categories'
 import MovieCard from '@/components/MovieCard'
 
-const TMDB_KEY = import.meta.env.VITE_TMDB_KEY
-
 function Categoria() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -31,7 +29,6 @@ function Categoria() {
       try {
         const resposta = await api.get(categoria.endpoint, {
           params: {
-            api_key: TMDB_KEY,
             language: 'pt-BR',
             page: pagina,
             ...categoria.params,

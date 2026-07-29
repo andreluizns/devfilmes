@@ -19,3 +19,7 @@ coverage
 .claude
 .superpowers
 docs
+
+# Markdown solto (mantém só o README)
+*.md
+!/README.md

@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/services/supabase'
+import estados from '@/config/estados'
+import { useToast } from '@/hooks/useToast'
 
 function Cadastro() {
   const navigate = useNavigate()
+  const { toast } = useToast()
   const [form, setForm] = useState({ name: '', email: '', senha: '', city: '', state: '' })
   const [erro, setErro] = useState(null)
   const [carregando, setCarregando] = useState(false)
@@ -15,6 +18,13 @@ function Cadastro() {
   async function handleSubmit(e) {
     e.preventDefault()
     setErro(null)
+
+    if (form.senha.length < 6) {
+      setErro('A senha deve ter pelo menos 6 caracteres.')
+      toast('A senha deve ter pelo menos 6 caracteres.', 'error')
+      return
+    }
+
     setCarregando(true)
 
     const { error } = await supabase.auth.signUp({
@@ -27,15 +37,10 @@ function Cadastro() {
 
     setCarregando(false)
     if (error) {
-      setErro(error.message)
+      setErro('Não foi possível criar a conta. Verifique os dados e tente novamente.')
+      toast('Não foi possível criar a conta. Verifique os dados e tente novamente.', 'error')
     } else {
-      const { data: sessionData } = await supabase.auth.getSession()
-      if (sessionData?.session?.user) {
-        await supabase
-          .from('profiles')
-          .update({ city: form.city, state: form.state })
-          .eq('id', sessionData.session.user.id)
-      }
+      toast('Conta criada com sucesso! Bem-vindo(a) ao DevFilme.', 'success')
       navigate('/')
     }
   }
@@ -62,7 +67,6 @@ function Cadastro() {
             { name: 'email', label: 'E-mail', type: 'email', placeholder: 'seu@email.com' },
             { name: 'senha', label: 'Senha', type: 'password', placeholder: '••••••••' },
             { name: 'city', label: 'Cidade', type: 'text', placeholder: 'São Paulo' },
-            { name: 'state', label: 'Estado', type: 'text', placeholder: 'SP' },
           ].map(({ name, label, type, placeholder }) => (
             <div key={name}>
               <label className="text-sm font-medium text-gray-700 block mb-1">{label}</label>
@@ -77,6 +81,21 @@ function Cadastro() {
               />
             </div>
           ))}
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-1">Estado</label>
+            <select
+              name="state"
+              value={form.state}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="" disabled>Selecione o estado</option>
+              {estados.map(({ uf, nome }) => (
+                <option key={uf} value={uf}>{nome}</option>
+              ))}
+            </select>
+          </div>
           <button
             type="submit"
             disabled={carregando}

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { supabase } from '@/services/supabase'
 import { useAuth } from '@/hooks/useAuth'
+import { useToast } from '@/hooks/useToast'
 
 function CommentForm({ filmId, onNovoComentario }) {
   const { usuario } = useAuth()
+  const { toast } = useToast()
   const [texto, setTexto] = useState('')
   const [enviando, setEnviando] = useState(false)
 
@@ -24,6 +26,9 @@ function CommentForm({ filmId, onNovoComentario }) {
     if (!error && data?.[0]) {
       setTexto('')
       onNovoComentario(data[0])
+      toast('Comentário publicado!', 'success')
+    } else {
+      toast('Erro ao publicar comentário. Tente novamente.', 'error')
     }
   }
 

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '@/services/supabase'
+import { useToast } from '@/hooks/useToast'
 
 function NovaSenha() {
   const navigate = useNavigate()
+  const { toast } = useToast()
   const [senha, setSenha] = useState('')
   const [confirmar, setConfirmar] = useState('')
   const [erro, setErro] = useState(null)
@@ -42,10 +44,12 @@ function NovaSenha() {
     e.preventDefault()
     if (senha !== confirmar) {
       setErro('As senhas não coincidem.')
+      toast('As senhas não coincidem.', 'error')
       return
     }
     if (senha.length < 6) {
       setErro('A senha deve ter pelo menos 6 caracteres.')
+      toast('A senha deve ter pelo menos 6 caracteres.', 'error')
       return
     }
 
@@ -56,7 +60,9 @@ function NovaSenha() {
 
     if (error) {
       setErro('Não foi possível alterar a senha. O link pode ter expirado.')
+      toast('Não foi possível alterar a senha. O link pode ter expirado.', 'error')
     } else {
+      toast('Senha alterada com sucesso!', 'success')
       navigate('/')
     }
   }

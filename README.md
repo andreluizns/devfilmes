@@ -43,86 +43,19 @@ Site de catálogo de filmes construído com React. Exibe filmes por categoria us
 
 ## Configuração do banco de dados (Supabase)
 
-Acesse seu projeto no Supabase → **SQL Editor** → execute os três blocos abaixo em sequência.
+O schema (tabelas, RLS e trigger de perfil automático) é versionado em [`supabase/migrations`](supabase/migrations) — não é mais SQL solto no README, para não divergir do que roda em produção.
 
-### 1. Criar as tabelas
+Para aplicar num projeto novo:
 
-```sql
-create table profiles (
-  id uuid references auth.users on delete cascade primary key,
-  name text not null,
-  city text,
-  state text,
-  avatar_url text,
-  created_at timestamp with time zone default now()
-);
-
-create table favorites (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references profiles(id) on delete cascade not null,
-  film_id integer not null,
-  film_title text,
-  film_poster text,
-  created_at timestamp with time zone default now(),
-  unique(user_id, film_id)
-);
-
-create table film_comments (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references profiles(id) on delete cascade not null,
-  film_id integer not null,
-  comment text not null,
-  created_at timestamp with time zone default now()
-);
-
-create table site_reviews (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references profiles(id) on delete cascade not null,
-  comment text not null,
-  approved boolean default false,
-  created_at timestamp with time zone default now()
-);
+```bash
+npx supabase login
+npx supabase link --project-ref <seu-project-ref>
+npx supabase db push
 ```
 
-### 2. Habilitar RLS e criar políticas
+Isso cria `profiles`, `favorites`, `film_comments`, `site_reviews`, habilita RLS com as políticas de cada tabela e o trigger `on_auth_user_created` que popula `profiles` (incluindo `city`/`state`, recebidos via `options.data` no `supabase.auth.signUp`) assim que um usuário se cadastra.
 
-```sql
-alter table profiles enable row level security;
-alter table favorites enable row level security;
-alter table film_comments enable row level security;
-alter table site_reviews enable row level security;
-
-create policy "Leitura pública de perfis" on profiles for select using (true);
-create policy "Usuário edita próprio perfil" on profiles for insert with check (auth.uid() = id);
-
-create policy "Usuário gerencia favoritos" on favorites for all using (auth.uid() = user_id);
-
-create policy "Leitura pública de comentários" on film_comments for select using (true);
-create policy "Autenticados comentam" on film_comments for insert with check (auth.uid() = user_id);
-
-create policy "Leitura de opiniões aprovadas" on site_reviews for select using (approved = true);
-create policy "Autenticados enviam opiniões" on site_reviews for insert with check (auth.uid() = user_id);
-```
-
-### 3. Trigger de perfil automático
-
-```sql
-create or replace function handle_new_user()
-returns trigger as $$
-begin
-  insert into profiles (id, name)
-  values (
-    new.id,
-    coalesce(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1))
-  );
-  return new;
-end;
-$$ language plpgsql security definer;
-
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure handle_new_user();
-```
+Se o repositório estiver conectado à [GitHub integration do Supabase](https://supabase.com/docs/guides/deployment/branching/github-integration), esse push acontece automaticamente a cada merge na branch de produção.
 
 ---
 
@@ -146,12 +79,12 @@ npm install
 Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-VITE_TMDB_KEY=sua_chave_tmdb_aqui
+TMDB_KEY=sua_chave_tmdb_aqui
 VITE_SUPABASE_URL=https://seu-projeto.supabase.co
 VITE_SUPABASE_ANON_KEY=sua_chave_anon_aqui
 ```
 
-- **VITE_TMDB_KEY**: obtida em [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api)
+- **TMDB_KEY**: obtida em [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api). Sem prefixo `VITE_` de propósito — o frontend nunca acessa essa chave diretamente, ela fica só no servidor (`api/tmdb/[...path].js` na Vercel, ou no middleware de dev do `vite.config.js`) e é consumida via `/api/tmdb/...`.
 - **VITE_SUPABASE_URL** e **VITE_SUPABASE_ANON_KEY**: obtidas em **Settings → API** no painel do Supabase
 
 ### 4. Executar em desenvolvimento
@@ -199,6 +132,11 @@ As opiniões enviadas pelos usuários na Home ficam com `approved = false` por p
 ## Estrutura do projeto
 
 ```
+api/
+└── tmdb/[...path].js     — proxy serverless que injeta a TMDB_KEY no servidor
+supabase/
+├── config.toml           — configuração da CLI/GitHub integration
+└── migrations/           — schema, RLS e triggers versionados
 src/
 ├── components/
 │   ├── Header/           — logo, navegação, avatar/login

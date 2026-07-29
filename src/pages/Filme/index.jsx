@@ -3,16 +3,17 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '@/services/api'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/services/supabase'
+import { useToast } from '@/hooks/useToast'
 import FilmComments from '@/components/FilmComments'
 
 const POSTER_BASE = 'https://image.tmdb.org/t/p/original'
 const ACTOR_BASE = 'https://image.tmdb.org/t/p/w185'
-const TMDB_KEY = import.meta.env.VITE_TMDB_KEY
 
 function Filme() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { usuario } = useAuth()
+  const { toast } = useToast()
 
   const [filme, setFilme] = useState(null)
   const [elenco, setElenco] = useState([])
@@ -24,7 +25,7 @@ function Filme() {
   useEffect(() => {
     async function carregar() {
       try {
-        const params = { params: { api_key: TMDB_KEY, language: 'pt-BR' } }
+        const params = { params: { language: 'pt-BR' } }
         const [resFilme, resCredits] = await Promise.all([
           api.get(`/movie/${id}`, params),
           api.get(`/movie/${id}/credits`, params),
@@ -52,10 +53,13 @@ function Filme() {
     setSalvando(false)
     if (error?.code === '23505') {
       setMensagem('Este filme já está nos seus favoritos.')
+      toast('Este filme já está nos seus favoritos.', 'info')
     } else if (error) {
       setMensagem('Erro ao salvar. Tente novamente.')
+      toast('Erro ao salvar. Tente novamente.', 'error')
     } else {
       setMensagem('Filme salvo nos favoritos!')
+      toast('Filme salvo nos favoritos!', 'success')
     }
     clearTimeout(mensagemTimer.current)
     mensagemTimer.current = setTimeout(() => setMensagem(null), 3000)

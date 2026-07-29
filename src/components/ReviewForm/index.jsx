@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react'
 import { supabase } from '@/services/supabase'
 import { useAuth } from '@/hooks/useAuth'
+import { useToast } from '@/hooks/useToast'
 
 function ReviewForm({ onEnviado }) {
   const { usuario } = useAuth()
+  const { toast } = useToast()
   const [texto, setTexto] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [sucesso, setSucesso] = useState(false)
@@ -13,14 +15,21 @@ function ReviewForm({ onEnviado }) {
     e.preventDefault()
     if (!texto.trim()) return
     setEnviando(true)
-    await supabase.from('site_reviews').insert({
+    const { error } = await supabase.from('site_reviews').insert({
       user_id: usuario.id,
       comment: texto.trim(),
     })
     setEnviando(false)
+
+    if (error) {
+      toast('Erro ao enviar opinião. Tente novamente.', 'error')
+      return
+    }
+
     setTexto('')
     setSucesso(true)
     onEnviado?.()
+    toast('Opinião enviada! Será exibida após aprovação.', 'success')
     clearTimeout(sucessoTimer.current)
     sucessoTimer.current = setTimeout(() => setSucesso(false), 4000)
   }
