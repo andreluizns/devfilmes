@@ -42,9 +42,13 @@ function Header() {
               >
                 Sair
               </button>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-300 flex items-center justify-center text-white text-sm font-bold">
+              <Link
+                to="/perfil"
+                title="Editar perfil"
+                className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-300 flex items-center justify-center text-white text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
+              >
                 {usuario.email?.[0].toUpperCase()}
-              </div>
+              </Link>
             </>
           ) : (
             <>

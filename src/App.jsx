@@ -7,6 +7,7 @@ import ProtectedRoute from '@/components/ProtectedRoute'
 import Home from '@/pages/Home'
 import Filme from '@/pages/Filme'
 import Favoritos from '@/pages/Favoritos'
+import Perfil from '@/pages/Perfil'
 import Login from '@/pages/Login'
 import Cadastro from '@/pages/Cadastro'
 import Categoria from '@/pages/Categoria'
@@ -29,6 +30,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Favoritos />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/perfil"
+                element={
+                  <ProtectedRoute>
+                    <Perfil />
                   </ProtectedRoute>
                 }
               />
