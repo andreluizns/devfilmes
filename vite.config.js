@@ -10,9 +10,11 @@ function tmdbDevProxy(tmdbKey) {
     configureServer(server) {
       server.middlewares.use('/api/tmdb', async (req, res) => {
         const url = new URL(req.url, 'http://localhost')
+        const path = url.searchParams.get('path')
+        url.searchParams.delete('path')
         url.searchParams.set('api_key', tmdbKey)
 
-        const tmdbResponse = await fetch(`${TMDB_BASE}${url.pathname}?${url.searchParams.toString()}`)
+        const tmdbResponse = await fetch(`${TMDB_BASE}/${path}?${url.searchParams.toString()}`)
         const data = await tmdbResponse.json()
 
         res.statusCode = tmdbResponse.status
