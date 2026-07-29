@@ -79,12 +79,12 @@ npm install
 Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-TMDB_KEY=sua_chave_tmdb_aqui
+VITE_TMDB_KEY=sua_chave_tmdb_aqui
 VITE_SUPABASE_URL=https://seu-projeto.supabase.co
 VITE_SUPABASE_ANON_KEY=sua_chave_anon_aqui
 ```
 
-- **TMDB_KEY**: obtida em [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api). Sem prefixo `VITE_` de propósito — o frontend nunca acessa essa chave diretamente, ela fica só no servidor (`api/tmdb/[...path].js` na Vercel, ou no middleware de dev do `vite.config.js`) e é consumida via `/api/tmdb/...`.
+- **VITE_TMDB_KEY**: obtida em [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api)
 - **VITE_SUPABASE_URL** e **VITE_SUPABASE_ANON_KEY**: obtidas em **Settings → API** no painel do Supabase
 
 ### 4. Executar em desenvolvimento
@@ -132,8 +132,6 @@ As opiniões enviadas pelos usuários na Home ficam com `approved = false` por p
 ## Estrutura do projeto
 
 ```
-api/
-└── tmdb/[...path].js     — proxy serverless que injeta a TMDB_KEY no servidor
 supabase/
 ├── config.toml           — configuração da CLI/GitHub integration
 └── migrations/           — schema, RLS e triggers versionados

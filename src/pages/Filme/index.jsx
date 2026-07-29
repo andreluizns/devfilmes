@@ -8,6 +8,7 @@ import FilmComments from '@/components/FilmComments'
 
 const POSTER_BASE = 'https://image.tmdb.org/t/p/original'
 const ACTOR_BASE = 'https://image.tmdb.org/t/p/w185'
+const TMDB_KEY = import.meta.env.VITE_TMDB_KEY
 
 function Filme() {
   const { id } = useParams()
@@ -25,7 +26,7 @@ function Filme() {
   useEffect(() => {
     async function carregar() {
       try {
-        const params = { params: { language: 'pt-BR' } }
+        const params = { params: { api_key: TMDB_KEY, language: 'pt-BR' } }
         const [resFilme, resCredits] = await Promise.all([
           api.get(`/movie/${id}`, params),
           api.get(`/movie/${id}/credits`, params),

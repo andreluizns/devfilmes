@@ -13,6 +13,7 @@ function useMovies(endpoint, params) {
       try {
         const resposta = await api.get(endpoint, {
           params: {
+            api_key: import.meta.env.VITE_TMDB_KEY,
             language: 'pt-BR',
             page: 1,
             ...params,
