@@ -33,3 +33,17 @@
 .animate-toast-in {
   animation: toast-in 0.2s ease-out;
 }
+
+@keyframes toast-progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.animate-toast-progress {
+  animation-name: toast-progress;
+  animation-timing-function: linear;
+}
